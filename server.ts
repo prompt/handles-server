@@ -4,8 +4,8 @@ import {
   ServerResponse,
   OutgoingHttpHeaders,
 } from "http";
-import { logger } from "./logging";
-import { FindsDecentralizedIDOfHandle } from "./handles";
+import { logger } from "@/logging";
+import { FindsDecentralizedIDOfHandle } from "@/handles";
 
 function respond(
   res: ServerResponse,

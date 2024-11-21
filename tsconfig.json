@@ -8,7 +8,10 @@
     "strict": true,
     "skipLibCheck": true,
     "paths": {
-      "/*": ["./*"]
+      "@/*": ["./*"]
     }
+  },
+  "ts-node": {
+    "require": ["tsconfig-paths/register"]
   }
 }

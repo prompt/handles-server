@@ -1,14 +1,16 @@
-import { expose } from "./server";
-import { HandleMap } from "./handles";
+import { instantiateProviderFromStringConfiguration } from "@/providers";
+import { expose } from "@/server";
+import { logger } from "@/logging";
 
-const server = expose(
-  new HandleMap({
-    "alice.example.com": "did:plc:example",
-  }),
+const provider = instantiateProviderFromStringConfiguration(
+  process.env.HANDLES_PROVIDER,
 );
 
+const server = expose(provider);
+
 if (process.env.VERCEL !== "1") {
-  server.listen(process.env.PORT || 3000, () => console.log("Listening"));
+  const port = process.env.PORT || 3000;
+  server.listen(port, () => logger.info(`Listening on ${port}`));
 }
 
 export default server;

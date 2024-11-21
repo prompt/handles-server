@@ -8,18 +8,25 @@
     "dev": "npx ts-node index.ts",
     "lint": "npx prettier . --write && npx eslint .",
     "validate": "npx --package typescript tsc --noEmit",
-    "fmt": "npm run lint && npm run validate"
+    "fmt": "npm run lint && npm run validate",
+    "test": "npx jest"
   },
   "dependencies": {
     "pino": "^9.5.0",
-    "pino-pretty": "^13.0.0"
+    "pino-pretty": "^13.0.0",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@eslint/js": "^9.15.0",
     "@types/eslint__js": "^8.42.3",
-    "@types/node": "^22.9.0",
+    "@types/jest": "^29.5.14",
+    "@types/node": "^22.9.1",
     "eslint": "^9.14.0",
+    "jest": "^29.7.0",
     "prettier": "^3.3.3",
+    "ts-jest": "^29.2.5",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.6.3",
     "typescript-eslint": "^8.14.0"
   }
