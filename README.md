@@ -55,5 +55,3 @@ did:plc:example1
 ### Google Sheets
 
 ...
-
-## Deploy
