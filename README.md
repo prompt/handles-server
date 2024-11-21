@@ -8,9 +8,9 @@ claims via DNS. Configure with a provider, and let it run.
 
 ## Providers
 
-A provider is configured using the `HANDLES_PROVIDER` Environment Variable. A
+The provider is configured using the `HANDLES_PROVIDER` Environment Variable. A
 `key` identifies the provider and the `value` configures how the provider will
-behave (always wrap the value in quotes (i.e: `HANDLES_PROVIDER="value"`)).
+behave.
 
 ```shell
 HANDLES_PROVIDER="provider:configuration"
