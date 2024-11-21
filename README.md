@@ -18,7 +18,7 @@ HANDLES_PROVIDER="provider:configuration"
 
 ### `HandleMap`
 
-`HandleMap` is the default provider, it serves the comma-separated handle->did
+`HandleMap` is an example provider, it serves the comma-separated handle->did
 values it has been configured with.
 
 ```shell
