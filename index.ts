@@ -1,6 +1,6 @@
-import { instantiateProviderFromStringConfiguration } from "@/providers";
-import { expose } from "@/server";
-import { logger } from "@/logging";
+import { instantiateProviderFromStringConfiguration } from "./providers";
+import { expose } from "./server";
+import { logger } from "./logging";
 
 const provider = instantiateProviderFromStringConfiguration(
   process.env.HANDLES_PROVIDER,

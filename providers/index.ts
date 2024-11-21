@@ -1,6 +1,6 @@
-import { FindsDecentralizedIDOfHandle } from "@/handles";
-import { HandleMap } from "@/providers/map";
-import { logger } from "@/logging";
+import { FindsDecentralizedIDOfHandle } from "./../handles";
+import { HandleMap } from "./../providers/map";
+import { logger } from "./../logging";
 import { z } from "zod";
 
 // A list of keys of available providers

@@ -1,6 +1,6 @@
-import { FindsDecentralizedIDOfHandle } from "@/handles";
+import { FindsDecentralizedIDOfHandle } from "./../handles";
 import { z } from "zod";
-import { logger } from "@/logging";
+import { logger } from "./../logging";
 
 export class HandleMap implements FindsDecentralizedIDOfHandle {
   constructor(private readonly identities: Map<string, string>) {}
