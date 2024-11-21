@@ -1,10 +1,12 @@
 import { FindsDecentralizedIDOfHandle } from "./../handles";
-import { HandleMap } from "./../providers/map";
 import { logger } from "./../logging";
 import { z } from "zod";
 
+import { HandleMap } from "./map";
+import { PostgresHandles } from "./pg";
+
 // A list of keys of available providers
-const providerKeys = z.enum(["map"]);
+const providerKeys = z.enum(["map", "pg"]);
 
 type ProviderKey = z.infer<typeof providerKeys>;
 
@@ -14,6 +16,8 @@ export const providers: Record<
   (config: string) => FindsDecentralizedIDOfHandle
 > = {
   map: (config: string) => HandleMap.fromEnvironmentVariable(config),
+  pg: (config: string) =>
+    PostgresHandles.fromEnvironmentVariable(process.env[config] || config),
 };
 
 export function instantiateProviderFromStringConfiguration(
@@ -39,7 +43,7 @@ export function instantiateProviderFromStringConfiguration(
 
   const provider = providers[providerKey](configuration);
 
-  logger.info(`Instantiated '${providerKey}'`);
+  logger.info(`Instantiated '${providerKey}' provider`);
 
   return provider;
 }

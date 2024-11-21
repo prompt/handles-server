@@ -50,7 +50,14 @@ did:plc:example1
 
 ### Postgres
 
-...
+`PostgresHandles` queries a `handles` table (or view) for a `did` identified by
+a `handle`. The `HANDLES_PROVIDER` configuration can either point to another
+Environment Variable which contains the connection string or it can contain a
+connection string itself.
+
+```shell
+$ HANDLES_PROVIDER="pg:DATABASE_URL" npm run dev
+```
 
 ### Google Sheets
 
