@@ -24,7 +24,24 @@ values it has been configured with.
 ```shell
 $ HANDLES_PROVIDER="map:alice.at.example.com->did:plc:example1,bob.at.example.com->did:plc:example2" \
 npm run dev
+
+[00:00:00.000] INFO (0000): Resolved configuration to provider 'map'
+[00:00:00.000] DEBUG (0000): Successfully parsed a list of handles.
+    handles: [
+      [
+        "alice.at.example.com",
+        "did:plc:example1"
+      ],
+      [
+        "bob.at.example.com",
+        "did:plc:example2"
+      ]
+    ]
+[00:00:00.000] INFO (0000): Instantiated 'map'
+[00:00:00.000] INFO (0000): Listening on 3000
 ```
+
+Make a request passing in the target handle as the `Host`.
 
 ```shell
 $ curl http://localhost:3000/.well-known/atproto-did --header "Host: alice.at.example.com"
