@@ -56,8 +56,20 @@ async function handleRequest(
     return log.debug("Redirected to Bluesky profile.");
   }
 
-  respond(res, "", 307, { location: `http://${domain}` });
-  return log.debug("Redirected to naked domain.");
+  const utm = new URLSearchParams({
+    utm_source: "handles-server",
+    utm_medium: "http",
+    utm_campaign: "redirect",
+    utm_term: handle,
+  });
+
+  const noProfileDestination = `${process.env.HANDLES_FALLBACK_URL || "https://" + domain}?${utm}`;
+
+  respond(res, "", 307, { location: noProfileDestination });
+  return log.debug(
+    { noProfileDestination },
+    "Redirected to no profile destination.",
+  );
 }
 
 export function expose(handles: FindsDecentralizedIDOfHandle) {
