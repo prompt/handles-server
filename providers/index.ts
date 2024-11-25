@@ -17,7 +17,10 @@ export const providers: Record<
 > = {
   map: (config: string) => HandleMap.fromEnvironmentVariable(config),
   pg: (config: string) =>
-    PostgresHandles.fromEnvironmentVariable(process.env[config] || config),
+    PostgresHandles.fromEnvironmentVariable(
+      process.env[config] || config,
+      process.env.HANDLES_PG_TABLE || "handles",
+    ),
 };
 
 export function instantiateProviderFromStringConfiguration(

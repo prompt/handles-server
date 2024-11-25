@@ -10,11 +10,14 @@ export type QueriesDatabaseForHandle = {
 };
 
 export class PostgresHandles implements FindsDecentralizedIDOfHandle {
-  constructor(private readonly database: QueriesDatabaseForHandle) {}
+  constructor(
+    private readonly database: QueriesDatabaseForHandle,
+    private readonly table: string,
+  ) {}
 
   async findDecentralizedIDofHandle(handle: string) {
     const { rows } = await this.database.query(
-      "SELECT handle, did FROM handles WHERE handle = $1",
+      `SELECT handle, did FROM ${this.table} WHERE LOWER(handle) = $1`,
       [handle.toLowerCase()],
     );
 
@@ -23,11 +26,14 @@ export class PostgresHandles implements FindsDecentralizedIDOfHandle {
     return rows.length === 1 ? rows[0].did : null;
   }
 
-  static fromEnvironmentVariable(config: string): PostgresHandles {
+  static fromEnvironmentVariable(
+    config: string,
+    table: string,
+  ): PostgresHandles {
     const client = new Pool({ connectionString: config });
 
     client.connect();
 
-    return new PostgresHandles(client);
+    return new PostgresHandles(client, table);
   }
 }
