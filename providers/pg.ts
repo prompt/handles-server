@@ -12,7 +12,7 @@ export type QueriesDatabaseForHandle = {
 export class PostgresHandles implements FindsDecentralizedIDOfHandle {
   constructor(
     private readonly database: QueriesDatabaseForHandle,
-    private readonly table: string = "handles",
+    private readonly table: string,
   ) {}
 
   async findDecentralizedIDofHandle(handle: string) {

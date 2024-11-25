@@ -1,14 +1,17 @@
 import { PostgresHandles } from "./pg";
 
-const examplePostgresHandler = new PostgresHandles({
-  query: (q: string, v: string[]) =>
-    Promise.resolve({
-      rows:
-        v.join() == "alice.at.example.com"
-          ? [{ handle: "alice.at.example.com", did: "did:plc:example1" }]
-          : [],
-    }),
-});
+const examplePostgresHandler = new PostgresHandles(
+  {
+    query: (q: string, v: string[]) =>
+      Promise.resolve({
+        rows:
+          v.join() == "alice.at.example.com"
+            ? [{ handle: "alice.at.example.com", did: "did:plc:example1" }]
+            : [],
+      }),
+  },
+  "handles",
+);
 
 describe("PostgresHandles", () => {
   test("Finds matching handle", async () => {
