@@ -20,7 +20,7 @@ jobs:
       - name: Build and package server
         run: npm run package
       - name: Upload binaries to release
-          uses: svenstaro/upload-release-action@v2
-          with:
-            file: builds/handles-server*
-            tag: test # TODO: Remove 
+        uses: svenstaro/upload-release-action@v2
+        with:
+          file: builds/handles-server*
+          tag: test # TODO: Remove
