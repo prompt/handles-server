@@ -1,6 +1,6 @@
 {
   "name": "@handles-net/handles-server",
-  "version": "0.1.0-alpha2",
+  "version": "0.1.0-alpha3",
   "main": "dist/index.js",
   "bin": "bin/index.js",
   "license": "MIT",
@@ -35,5 +35,19 @@
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.6.3",
     "typescript-eslint": "^8.14.0"
-  }
+  },
+  "description": "Verify Bluesky handles.",
+  "keywords": [
+    "bluesky",
+    "bsky",
+    "handles"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/prompt/handles-server"
+  },
+  "bugs": {
+    "url": "https://github.com/prompt/handles-server/issues"
+  },
+  "homepage": "https://github.com/prompt/handles-server"
 }
