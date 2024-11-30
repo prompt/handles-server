@@ -1,6 +1,6 @@
 {
-  "name": "@shrink/handles-server",
-  "version": "0.1.0",
+  "name": "@handles-net/handles-server",
+  "version": "0.1.0-alpha2",
   "main": "dist/index.js",
   "bin": "bin/index.js",
   "license": "MIT",

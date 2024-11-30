@@ -1,4 +1,4 @@
-name: Release (package and build)
+name: Release (package, build, publish)
 
 on:
   push:
@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 jobs:
-  upload-build:
+  upload-build-to-release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -27,3 +27,15 @@ jobs:
           overwrite: true
           make_latest: false
           tag: "test" # TODO: Remove
+  publish-package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+      - run: npm ci
+      - run: npm run build
+      - run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: "${{ secrets.NODE_AUTH_TOKEN }}"
