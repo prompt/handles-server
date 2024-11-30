@@ -2,8 +2,8 @@ name: Create Release
 
 on:
   push:
-    # tags:
-    #   - "v*"
+    tags:
+      - "v*"
 
 permissions:
   contents: write
@@ -24,4 +24,5 @@ jobs:
         with:
           file: "./builds/handles-server*"
           file_glob: true
-          tag: test # TODO: Remove
+          overwrite: true
+          make_latest: false
