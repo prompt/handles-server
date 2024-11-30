@@ -23,6 +23,10 @@ async function handleRequest(
   res: ServerResponse,
   handles: FindsDecentralizedIDOfHandle,
 ) {
+  if (req.url === "/healthz") {
+    return respond(res, "OK", 200);
+  }
+
   const handle = req.headers.host || "";
   const domain = handle.split(".").slice(1).join(".").toLowerCase();
 
