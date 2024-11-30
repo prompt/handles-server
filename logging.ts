@@ -3,7 +3,7 @@ import pino, { Logger } from "pino";
 const environment = process.env["NODE_ENV"] || "production";
 
 export const logger: Logger = ["production", "test"].includes(environment)
-  ? pino({ level: "warn" })
+  ? pino({ level: "info" })
   : pino({
       transport: {
         target: "pino-pretty",
