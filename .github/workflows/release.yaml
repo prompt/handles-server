@@ -2,8 +2,8 @@ name: Release (package, build, publish)
 
 on:
   push:
-    # tags:
-    #   - "v*"
+    tags:
+      - "v*"
 
 permissions:
   contents: write
@@ -27,7 +27,6 @@ jobs:
           file_glob: true
           overwrite: true
           make_latest: false
-          tag: "test" # TODO: Remove
   publish-package:
     runs-on: ubuntu-latest
     steps:
