@@ -1,0 +1,43 @@
+name: Release (package, build, publish)
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  upload-build-to-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+      - run: npm ci
+      - name: Build and package server
+        run: npm run package -- --targets node18-alpine-x64,node18-linux-x64,node18-macos-x64,node18-win-x64
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          file: "./builds/handles-server*"
+          file_glob: true
+          overwrite: true
+          make_latest: false
+  publish-package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+      - run: npm ci
+      - run: npm run build
+      - uses: JS-DevTools/npm-publish@v3
+        with:
+          token: ${{ secrets.NODE_AUTH_TOKEN }}
+          access: public
+          provenance: true

@@ -1,9 +1,9 @@
 import pino, { Logger } from "pino";
 
-export const logger: Logger = ["production", "test"].includes(
-  process.env["NODE_ENV"] || "unknown",
-)
-  ? pino({ level: "warn" })
+const environment = process.env["NODE_ENV"] || "production";
+
+export const logger: Logger = ["production", "test"].includes(environment)
+  ? pino({ level: "info" })
   : pino({
       transport: {
         target: "pino-pretty",

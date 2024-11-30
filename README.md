@@ -4,7 +4,17 @@ A very simple server that reponds to Bluesky handle verification requests for
 the domain(s) that the server is exposed to, as an alternative to managing
 claims via DNS. Configure with a provider, and let it run.
 
+> [!IMPORTANT]  
+> `handles-server` is already serving thousands of Handles in production
+> at [Handles Club](https://handles.club) and [handles.net](https://handles.net)
+> but as it is not yet v1 it may change.
+
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fshrink-inc%2Fhandles-server&env=HANDLES_PROVIDER)
+
+```shell
+$ curl -O https://github.com/prompt/handles-server/releases/download/v0/handles-server-linux
+$ HANDLES_PROVIDER="map:alice.at.example.com->did:plc:example1" ./handles-server-linux
+```
 
 ## Providers
 
@@ -23,7 +33,7 @@ values it has been configured with.
 
 ```shell
 $ HANDLES_PROVIDER="map:alice.at.example.com->did:plc:example1,bob.at.example.com->did:plc:example2" \
-npm run dev
+./handles-server
 
 [00:00:00.000] INFO (0000): Resolved configuration to provider 'map'
 [00:00:00.000] DEBUG (0000): Successfully parsed a list of handles.
@@ -56,7 +66,7 @@ Environment Variable which contains the connection string or it can contain a
 connection string itself.
 
 ```shell
-$ HANDLES_PROVIDER="pg:DATABASE_URL" npm run dev
+$ HANDLES_PROVIDER="pg:DATABASE_URL" ./handles-server
 ```
 
 ### Google Sheets
