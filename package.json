@@ -2,6 +2,7 @@
   "name": "@shrink/handles-server",
   "version": "0.1.0",
   "main": "dist/index.js",
+  "bin": "bin/index.js",
   "license": "MIT",
   "scripts": {
     "build": "npx tsc",
@@ -9,12 +10,12 @@
     "lint": "npx prettier . --write && npx eslint .",
     "validate": "npx --package typescript tsc --noEmit",
     "fmt": "npm run lint && npm run validate",
-    "test": "npx jest"
+    "test": "npx jest",
+    "package": "npx ncc build index.ts -o bin && npx pkg bin/index.js --output ./builds/handles-server"
   },
   "dependencies": {
     "pg": "^8.13.1",
     "pino": "^9.5.0",
-    "pino-pretty": "^13.0.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
@@ -23,8 +24,11 @@
     "@types/jest": "^29.5.14",
     "@types/node": "^22.9.1",
     "@types/pg": "^8.11.10",
+    "@vercel/ncc": "^0.38.3",
     "eslint": "^9.14.0",
     "jest": "^29.7.0",
+    "pino-pretty": "^13.0.0",
+    "pkg": "^5.8.1",
     "prettier": "^3.3.3",
     "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",

@@ -23,7 +23,7 @@ values it has been configured with.
 
 ```shell
 $ HANDLES_PROVIDER="map:alice.at.example.com->did:plc:example1,bob.at.example.com->did:plc:example2" \
-npm run dev
+./handles-server
 
 [00:00:00.000] INFO (0000): Resolved configuration to provider 'map'
 [00:00:00.000] DEBUG (0000): Successfully parsed a list of handles.
@@ -56,7 +56,7 @@ Environment Variable which contains the connection string or it can contain a
 connection string itself.
 
 ```shell
-$ HANDLES_PROVIDER="pg:DATABASE_URL" npm run dev
+$ HANDLES_PROVIDER="pg:DATABASE_URL" ./handles-server
 ```
 
 ### Google Sheets

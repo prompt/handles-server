@@ -1,8 +1,8 @@
 import pino, { Logger } from "pino";
 
-export const logger: Logger = ["production", "test"].includes(
-  process.env["NODE_ENV"] || "unknown",
-)
+const environment = process.env["NODE_ENV"] || "production";
+
+export const logger: Logger = ["production", "test"].includes(environment)
   ? pino({ level: "warn" })
   : pino({
       transport: {
