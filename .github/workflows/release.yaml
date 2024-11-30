@@ -18,9 +18,10 @@ jobs:
           node-version: "18"
       - run: npm ci
       - name: Build and package server
-        run: npm run package
+        run: npm run package -- --targets node18-alpine-x64,node18-linux-x64,node18-macos-x64,node18-win-x64
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
         with:
-          file: builds/handles-server*
+          file: "./builds/handles-server*"
+          file_glob: true
           tag: test # TODO: Remove
