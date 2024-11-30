@@ -4,6 +4,11 @@ A very simple server that reponds to Bluesky handle verification requests for
 the domain(s) that the server is exposed to, as an alternative to managing
 claims via DNS. Configure with a provider, and let it run.
 
+> [!IMPORTANT]  
+> `handles-server` is already serving thousands of Handles in production
+> at [Handles Club](https://handles.club) and [handles.net](https://handles.net)
+> but as it is not yet v1 it may change.
+
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fshrink-inc%2Fhandles-server&env=HANDLES_PROVIDER)
 
 ```shell
