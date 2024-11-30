@@ -1,4 +1,4 @@
-name: Create Release
+name: Release (package and build)
 
 on:
   push:
@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   upload-build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
