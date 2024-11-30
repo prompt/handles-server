@@ -6,6 +6,11 @@ claims via DNS. Configure with a provider, and let it run.
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fshrink-inc%2Fhandles-server&env=HANDLES_PROVIDER)
 
+```shell
+$ curl -O https://github.com/prompt/handles-server/releases/download/v0/handles-server-linux
+$ HANDLES_PROVIDER="map:alice.at.example.com->did:plc:example1" ./handles-server-linux
+```
+
 ## Providers
 
 The provider is configured using the `HANDLES_PROVIDER` Environment Variable. A
