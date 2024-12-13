@@ -100,4 +100,22 @@ describe("Handles Server", () => {
       "https://example.com/domains/at.example.com?handle=not-registered.at.example.com",
     );
   });
+
+  test("Replaces multiple instances of token in fallback URL", async () => {
+    const res = await performRequest(
+      {
+        method: "GET",
+        url: "/",
+        headers: { Host: "not-registered.at.example.com" },
+      },
+      {
+        fallbackUrl: "https://example.com/{handle}?handle={handle}",
+      },
+    );
+
+    expect(res._getStatusCode()).toBe(307);
+    expect(res._getHeaders().location).toBe(
+      "https://example.com/not-registered.at.example.com?handle=not-registered.at.example.com",
+    );
+  });
 });

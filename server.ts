@@ -72,7 +72,7 @@ export async function handleRequest(
 
   Object.entries({ domain, handle }).forEach(
     ([token, value]) =>
-      (noProfileDestination = noProfileDestination.replace(
+      (noProfileDestination = noProfileDestination.replaceAll(
         `{${token}}`,
         value,
       )),
