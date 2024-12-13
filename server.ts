@@ -8,7 +8,7 @@ import { logger } from "./logging";
 import { FindsDecentralizedIDOfHandle } from "./handles";
 
 export const defaultFallbackUrl =
-  "https://{domain}?utm_source=handles-server&utm_medium=htto&utm_campaign=redirect&utm_term={handle}";
+  "https://{domain}?utm_source=handles-server&utm_medium=http&utm_campaign=redirect&utm_term={handle}";
 
 function respond(
   res: ServerResponse,
