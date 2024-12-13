@@ -7,6 +7,9 @@ import {
 import { logger } from "./logging";
 import { FindsDecentralizedIDOfHandle } from "./handles";
 
+export const defaultFallbackUrl =
+  "https://{domain}?utm_source=handles-server&utm_medium=htto&utm_campaign=redirect&utm_term={handle}";
+
 function respond(
   res: ServerResponse,
   body: string,
@@ -18,10 +21,15 @@ function respond(
   res.end();
 }
 
-async function handleRequest(
+export type HttpConfiguration = {
+  fallbackUrl: string;
+};
+
+export async function handleRequest(
   req: IncomingMessage,
   res: ServerResponse,
   handles: FindsDecentralizedIDOfHandle,
+  options: HttpConfiguration,
 ) {
   if (req.url === "/healthz") {
     return respond(res, "OK", 200);
@@ -60,14 +68,15 @@ async function handleRequest(
     return log.debug("Redirected to Bluesky profile.");
   }
 
-  const utm = new URLSearchParams({
-    utm_source: "handles-server",
-    utm_medium: "http",
-    utm_campaign: "redirect",
-    utm_term: handle,
-  });
+  let noProfileDestination = options.fallbackUrl;
 
-  const noProfileDestination = `${process.env.HANDLES_FALLBACK_URL || "https://" + domain}?${utm}`;
+  Object.entries({ domain, handle }).forEach(
+    ([token, value]) =>
+      (noProfileDestination = noProfileDestination.replace(
+        `{${token}}`,
+        value,
+      )),
+  );
 
   respond(res, "", 307, { location: noProfileDestination });
   return log.debug(
@@ -77,5 +86,9 @@ async function handleRequest(
 }
 
 export function expose(handles: FindsDecentralizedIDOfHandle) {
-  return createServer((req, res) => handleRequest(req, res, handles));
+  return createServer((req, res) =>
+    handleRequest(req, res, handles, {
+      fallbackUrl: process.env.HANDLES_FALLBACK_URL || defaultFallbackUrl,
+    }),
+  );
 }
