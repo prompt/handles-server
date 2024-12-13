@@ -79,7 +79,7 @@ describe("Handles Server", () => {
 
     expect(res._getStatusCode()).toBe(307);
     expect(res._getHeaders().location).toBe(
-      "https://at.example.com?utm_source=handles-server&utm_medium=htto&utm_campaign=redirect&utm_term=not-registered.at.example.com",
+      "https://at.example.com?utm_source=handles-server&utm_medium=http&utm_campaign=redirect&utm_term=not-registered.at.example.com",
     );
   });
 
