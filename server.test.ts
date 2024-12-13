@@ -117,5 +117,5 @@ describe("Handles Server", () => {
     expect(res._getHeaders().location).toBe(
       "https://example.com/not-registered.at.example.com?handle=not-registered.at.example.com",
     );
-  })
+  });
 });
