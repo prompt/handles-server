@@ -21,25 +21,22 @@ func main() {
 		Level: slog.LevelInfo,
 	}))
 
-	resolver := NewInMemoryResolver(map[Hostname]DecentralizedID{
-		"alice.example.com": "did:plc:example001",
-		"bob.example.com":   "did:plc:example002",
-	}, map[Domain]bool{
-		"example.com": true,
-	})
+	provider := config.Provider
 
-	resolver.SetHealthy(false)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	router := gin.New()
 
 	router.Use(sloggin.New(logger))
 	router.Use(gin.Recovery())
 
-	router.GET("/healthz", CheckServerIsHealthy(resolver))
-	router.GET("/domainz", CheckDomainIsResolvedByServer(resolver))
+	router.GET("/healthz", CheckServerIsHealthy(provider))
+	router.GET("/domainz", CheckServerProvidesForDomain(provider))
 
 	router.Use(ParseHandleFromHostname)
-	router.Use(ResolveHandle(resolver))
+	router.Use(WithHandleResult(provider))
 
 	router.GET("/.well-known/atproto-did", VerifyHandle)
 

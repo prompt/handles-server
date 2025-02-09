@@ -17,7 +17,6 @@ func HostnameToHandle(hostname string) (Handle, error) {
 	}
 
 	return Handle{
-		Hostname: Hostname(parts[0]),
 		Domain:   Domain(parts[2]),
 		Username: Username(parts[1]),
 	}, nil
@@ -32,7 +31,6 @@ func FormatTemplateUrl(
 	replacements := map[string]string{
 		"{handle}":          handle.String(),
 		"{did}":             string(did),
-		"{handle.hostname}": string(handle.Hostname),
 		"{handle.domain}":   string(handle.Domain),
 		"{handle.username}": string(handle.Username),
 		"{request.scheme}":  string(request.URL.Scheme),

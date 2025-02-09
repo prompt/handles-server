@@ -16,7 +16,6 @@ func TestValidHostnameIsParsedToHandle(t *testing.T) {
 		{
 			hostname: "alice.example.com",
 			expectedHandle: Handle{
-				Hostname: "alice.example.com",
 				Domain:   "example.com",
 				Username: "alice",
 			},
@@ -24,7 +23,6 @@ func TestValidHostnameIsParsedToHandle(t *testing.T) {
 		{
 			hostname: "alice.at.people.example.com",
 			expectedHandle: Handle{
-				Hostname: "alice.at.people.example.com",
 				Domain:   "at.people.example.com",
 				Username: "alice",
 			},
@@ -32,7 +30,6 @@ func TestValidHostnameIsParsedToHandle(t *testing.T) {
 		{
 			hostname: "ALICE.at.people.example.com",
 			expectedHandle: Handle{
-				Hostname: "alice.at.people.example.com",
 				Domain:   "at.people.example.com",
 				Username: "alice",
 			},
@@ -68,10 +65,6 @@ func TestTemplateUrlIsFormatted(t *testing.T) {
 			expectedUrl: "https://example.com/?handle=alice.example.com",
 		},
 		{
-			template:    "https://example.com/?handle={handle.hostname}",
-			expectedUrl: "https://example.com/?handle=alice.example.com",
-		},
-		{
 			template:    "https://{handle.domain}/?username={handle.username}",
 			expectedUrl: "https://example.com/?username=alice",
 		},
@@ -90,7 +83,7 @@ func TestTemplateUrlIsFormatted(t *testing.T) {
 	}
 
 	request, _ := http.NewRequest("GET", "https://alice.example.com?a=b", bytes.NewReader([]byte{}))
-	handle := Handle{Hostname: "alice.example.com", Domain: "example.com", Username: "alice"}
+	handle := Handle{Domain: "example.com", Username: "alice"}
 	did := DecentralizedID("did:plc:example")
 
 	for _, test := range tests {

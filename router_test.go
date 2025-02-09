@@ -20,7 +20,6 @@ func TestValidHandleIsAddedToRequestContext(t *testing.T) {
 	ParseHandleFromHostname(ctx)
 
 	assert.Equal(t, ctx.MustGet("handle"), Handle{
-		Hostname: "alice.example.com",
 		Domain:   "example.com",
 		Username: "alice",
 	})
@@ -39,14 +38,14 @@ func TestInvalidHostnameCausesBadRequest(t *testing.T) {
 	assert.Equal(t, http.StatusBadRequest, res.Code)
 }
 
-var testResolver = NewInMemoryResolver(map[Hostname]DecentralizedID{
+var testProvider = NewInMemoryProvider(map[Hostname]DecentralizedID{
 	"alice.example.com": "did:plc:example001",
 	"bob.example.com":   "did:plc:example002",
 }, map[Domain]bool{
 	"example.com": true,
 })
 
-func TestResolvedHandleIsAddedToRequestContext(t *testing.T) {
+func TestHandleResultIsAddedToRequestContext(t *testing.T) {
 	ctx, _ := gin.CreateTestContext(httptest.NewRecorder())
 
 	req, _ := http.NewRequest("GET", "/", nil)
@@ -54,21 +53,20 @@ func TestResolvedHandleIsAddedToRequestContext(t *testing.T) {
 	ctx.Request = req
 
 	ctx.Set("handle", Handle{
-		Hostname: "alice.example.com",
 		Domain:   "example.com",
 		Username: "alice",
 	})
 
-	ResolveHandle(testResolver)(ctx)
+	WithHandleResult(testProvider)(ctx)
 
-	assert.Equal(t, ctx.MustGet("resolution"), Resolution{
+	assert.Equal(t, ctx.MustGet("result"), Result{
 		HasDecentralizedID: true,
 		DecentralizedID:    "did:plc:example001",
 		Err:                nil,
 	})
 }
 
-func TestRedirectsUnmatchedRouteWithResolvedHandle(t *testing.T) {
+func TestRedirectsUnmatchedRouteWithDecentralizedID(t *testing.T) {
 	res := httptest.NewRecorder()
 	ctx, _ := gin.CreateTestContext(res)
 
@@ -77,19 +75,18 @@ func TestRedirectsUnmatchedRouteWithResolvedHandle(t *testing.T) {
 	ctx.Request = req
 
 	ctx.Set("handle", Handle{
-		Hostname: "alice.example.com",
 		Domain:   "example.com",
 		Username: "alice",
 	})
 
-	ctx.Set("resolution", Resolution{
+	ctx.Set("result", Result{
 		HasDecentralizedID: true,
 		DecentralizedID:    DecentralizedID("did:plc:example"),
 		Err:                nil,
 	})
 
 	RedirectUnmatchedRoute(Config{
-		HandleRedirect: "https://example.com/{did}",
+		RedirectDID: "https://example.com/{did}",
 	})(ctx)
 
 	url, _ := res.Result().Location()
@@ -98,7 +95,7 @@ func TestRedirectsUnmatchedRouteWithResolvedHandle(t *testing.T) {
 	assert.Equal(t, "https://example.com/did:plc:example", url.String())
 }
 
-func TestRedirectsUnmatchedRouteWithUnresolvedHandle(t *testing.T) {
+func TestRedirectsUnmatchedRouteWithoutDecentralizedID(t *testing.T) {
 	res := httptest.NewRecorder()
 	ctx, _ := gin.CreateTestContext(res)
 
@@ -107,18 +104,17 @@ func TestRedirectsUnmatchedRouteWithUnresolvedHandle(t *testing.T) {
 	ctx.Request = req
 
 	ctx.Set("handle", Handle{
-		Hostname: "alice.example.com",
 		Domain:   "example.com",
 		Username: "alice",
 	})
 
-	ctx.Set("resolution", Resolution{
+	ctx.Set("result", Result{
 		HasDecentralizedID: false,
-		Err:                errors.New("Handle not resolved to a DID."),
+		Err:                errors.New("No Decentralized ID found for handle."),
 	})
 
 	RedirectUnmatchedRoute(Config{
-		UnresolvableRedirect: "https://example.com/?from={handle}",
+		RedirectHandle: "https://example.com/?from={handle}",
 	})(ctx)
 
 	url, _ := res.Result().Location()
@@ -127,7 +123,7 @@ func TestRedirectsUnmatchedRouteWithUnresolvedHandle(t *testing.T) {
 	assert.Equal(t, "https://example.com/?from=alice.example.com", url.String())
 }
 
-func TestServerIsHealthyWhenResolverIsHealthy(t *testing.T) {
+func TestServerIsHealthyWhenProviderIsHealthy(t *testing.T) {
 	res := httptest.NewRecorder()
 	ctx, _ := gin.CreateTestContext(res)
 
@@ -135,14 +131,14 @@ func TestServerIsHealthyWhenResolverIsHealthy(t *testing.T) {
 	req.Host = "alice.example.com"
 	ctx.Request = req
 
-	testResolver.SetHealthy(true)
+	testProvider.SetHealthy(true)
 
-	CheckServerIsHealthy(testResolver)(ctx)
+	CheckServerIsHealthy(testProvider)(ctx)
 
 	assert.Equal(t, http.StatusOK, res.Code)
 }
 
-func TestServerIsUnhealthyWhenResolverIsUnhealthy(t *testing.T) {
+func TestServerIsUnhealthyWhenProviderIsUnhealthy(t *testing.T) {
 	res := httptest.NewRecorder()
 	ctx, _ := gin.CreateTestContext(res)
 
@@ -150,9 +146,9 @@ func TestServerIsUnhealthyWhenResolverIsUnhealthy(t *testing.T) {
 	req.Host = "alice.example.com"
 	ctx.Request = req
 
-	testResolver.SetHealthy(false)
+	testProvider.SetHealthy(false)
 
-	CheckServerIsHealthy(testResolver)(ctx)
+	CheckServerIsHealthy(testProvider)(ctx)
 
 	assert.Equal(t, http.StatusBadGateway, res.Code)
 }
