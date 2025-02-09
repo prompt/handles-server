@@ -64,6 +64,24 @@ func TestHandleResultIsAddedToRequestContext(t *testing.T) {
 	})
 }
 
+func TestRequestForUnsupportedDomainIsRejectedAsBadRequest(t *testing.T) {
+	res := httptest.NewRecorder()
+	ctx, _ := gin.CreateTestContext(res)
+
+	req, _ := http.NewRequest("GET", "/", nil)
+	req.Host = "alice.unsupported.domain"
+	ctx.Request = req
+
+	ctx.Set("handle", Handle{
+		Domain:   "unsupported.domain",
+		Username: "alice",
+	})
+
+	WithHandleResult(testProvider)(ctx)
+
+	assert.Equal(t, http.StatusBadRequest, res.Code)
+}
+
 func TestRedirectsUnmatchedRouteWithDecentralizedID(t *testing.T) {
 	res := httptest.NewRecorder()
 	ctx, _ := gin.CreateTestContext(res)

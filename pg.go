@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -42,6 +43,16 @@ func (pg *PostgresHandles) GetDecentralizedIDForHandle(ctx context.Context, hand
 		return "", err
 	}
 
+	canProvide, err := pg.CanProvideForDomain(ctx, handle.Domain)
+
+	if err != nil {
+		return "", err
+	}
+
+	if !canProvide {
+		return "", &CannotGetHandelsFromDomainError{domain: handle.Domain}
+	}
+
 	var did DecentralizedID
 
 	err = connection.QueryRow(
@@ -49,6 +60,10 @@ func (pg *PostgresHandles) GetDecentralizedIDForHandle(ctx context.Context, hand
 		"select did from handles_server_active_handles where handle = $1",
 		handle.String(),
 	).Scan(&did)
+
+	if errors.Is(err, pgx.ErrNoRows) {
+		return "", nil
+	}
 
 	if err != nil {
 		return "", err

@@ -13,7 +13,7 @@ func CheckServerIsHealthy(provider ProvidesDecentralizedIDs) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		healthy, explanation := provider.IsHealthy(c)
 		if !healthy {
-			c.AbortWithError(http.StatusBadGateway, errors.New(explanation))
+			_ = c.AbortWithError(http.StatusBadGateway, errors.New(explanation))
 		}
 		c.String(http.StatusOK, explanation)
 	}
@@ -28,7 +28,7 @@ func ParseHandleFromHostname(c *gin.Context) {
 	handle, err := HostnameToHandle(c.Request.Host)
 
 	if err != nil {
-		c.AbortWithError(http.StatusBadRequest, err)
+		_ = c.AbortWithError(http.StatusBadRequest, err)
 		return
 	}
 
@@ -44,7 +44,7 @@ func CheckServerProvidesForDomain(provider ProvidesDecentralizedIDs) gin.Handler
 		canProvide, err := provider.CanProvideForDomain(c, domain)
 
 		if err != nil {
-			c.AbortWithError(http.StatusBadGateway, err)
+			_ = c.AbortWithError(http.StatusBadGateway, err)
 			return
 		}
 
@@ -61,12 +61,19 @@ func WithHandleResult(provider ProvidesDecentralizedIDs) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		handle := c.MustGet("handle").(Handle)
 
-		// TODO: Check can provide for domain
-
 		did, err := provider.GetDecentralizedIDForHandle(c, handle)
 
+		if errors.Is(err, (*CannotGetHandelsFromDomainError)(nil)) {
+			c.String(
+				http.StatusBadRequest,
+				fmt.Sprintf("Decentralized IDs for the domain %s are not provided by this server.", handle.Domain),
+			)
+			c.Abort()
+			return
+		}
+
 		if err != nil {
-			c.AbortWithError(http.StatusBadGateway, err)
+			_ = c.AbortWithError(http.StatusBadGateway, err)
 			return
 		}
 

@@ -25,7 +25,9 @@ func main() {
 
 	AddApplicationRoutes(router, logger, config)
 
-	router.Run(net.JoinHostPort(config.Host, config.Port))
+	if err := router.Run(net.JoinHostPort(config.Host, config.Port)); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func AddApplicationRoutes(router *gin.Engine, logger *slog.Logger, config Config) {

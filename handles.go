@@ -38,9 +38,14 @@ func (e DecentralizedIDNotFoundError) Error() string {
 }
 
 type CannotGetHandelsFromDomainError struct {
-	handle Handle
+	domain Domain
 }
 
 func (e CannotGetHandelsFromDomainError) Error() string {
-	return fmt.Sprintf("Domain %s is not supported by this server", e.handle.Domain)
+	return fmt.Sprintf("Domain %s is not supported by this server", e.domain)
+}
+
+func (e *CannotGetHandelsFromDomainError) Is(target error) bool {
+	_, ok := target.(*CannotGetHandelsFromDomainError)
+	return ok
 }

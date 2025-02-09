@@ -27,7 +27,7 @@ func (memory *InMemoryProvider) GetDecentralizedIDForHandle(ctx context.Context,
 	}
 
 	if !canProvide {
-		return "", &CannotGetHandelsFromDomainError{handle: handle}
+		return "", &CannotGetHandelsFromDomainError{domain: handle.Domain}
 	}
 
 	did := memory.dids[Hostname(handle.String())]
