@@ -1,0 +1,39 @@
+version: "3"
+
+silent: true
+
+dotenv:
+  - "Taskfile.env.example"
+  - "Taskfile.env"
+
+tasks:
+  default:
+    cmds:
+      - task --list
+
+  run:
+    desc: "Run local development copy of the server"
+    cmds:
+      - go run .
+
+  test:
+    desc: "Run test suite"
+    cmds:
+      - go test . -v
+
+  format:
+    desc: "Format code"
+    deps:
+      - golang-ci
+    cmds:
+      - go fmt .
+      - golangci-lint run
+      - go mod tidy
+
+  golang-ci:
+    status:
+      - golangci-lint version && exit 0
+    cmds:
+      - >
+        curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh |
+        sh -s -- -b $(go env GOPATH)/bin v1.53.3
