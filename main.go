@@ -21,26 +21,24 @@ func main() {
 		Level: slog.LevelInfo,
 	}))
 
-	provider := config.Provider
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	router := gin.New()
 
+	AddApplicationRoutes(router, logger, config)
+
+	router.Run(net.JoinHostPort(config.Host, config.Port))
+}
+
+func AddApplicationRoutes(router *gin.Engine, logger *slog.Logger, config Config) {
 	router.Use(sloggin.New(logger))
 	router.Use(gin.Recovery())
 
-	router.GET("/healthz", CheckServerIsHealthy(provider))
-	router.GET("/domainz", CheckServerProvidesForDomain(provider))
+	router.GET("/healthz", CheckServerIsHealthy(config.Provider))
+	router.GET("/domainz", CheckServerProvidesForDomain(config.Provider))
 
 	router.Use(ParseHandleFromHostname)
-	router.Use(WithHandleResult(provider))
+	router.Use(WithHandleResult(config.Provider))
 
 	router.GET("/.well-known/atproto-did", VerifyHandle)
 
 	router.NoRoute(RedirectUnmatchedRoute(config))
-
-	router.Run(net.JoinHostPort(config.Host, config.Port))
 }

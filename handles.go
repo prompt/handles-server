@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"strings"
 )
@@ -23,9 +24,9 @@ func (handle Handle) String() string {
 }
 
 type ProvidesDecentralizedIDs interface {
-	GetDecentralizedIDForHandle(handle Handle) (DecentralizedID, error)
-	CanProvideForDomain(domain Domain) (bool, error)
-	IsHealthy() (bool, string)
+	GetDecentralizedIDForHandle(ctx context.Context, handle Handle) (DecentralizedID, error)
+	CanProvideForDomain(ctx context.Context, domain Domain) (bool, error)
+	IsHealthy(ctx context.Context) (bool, string)
 }
 
 type DecentralizedIDNotFoundError struct {

@@ -57,7 +57,7 @@ func TestInvalidHostnameReturnsError(t *testing.T) {
 
 func TestTemplateUrlIsFormatted(t *testing.T) {
 	tests := []struct {
-		template    string
+		template    URLTemplate
 		expectedUrl string
 	}{
 		{
@@ -87,7 +87,7 @@ func TestTemplateUrlIsFormatted(t *testing.T) {
 	did := DecentralizedID("did:plc:example")
 
 	for _, test := range tests {
-		url := FormatTemplateUrl(test.template, request, handle, did)
+		url := URLFromTemplate(test.template, request, handle, did)
 		assert.Equal(
 			t,
 			test.expectedUrl,

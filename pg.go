@@ -8,30 +8,33 @@ import (
 )
 
 type PostgresHandles struct {
-	pool *pgxpool.Pool
+	pool         *pgxpool.Pool
+	domainsTable string
+	handlesTable string
 }
 
-func NewPostgresHandlesProvider(config *pgxpool.Config) (*PostgresHandles, error) {
+func NewPostgresHandlesProvider(config *pgxpool.Config, handlesTable string, domainsTable string) (*PostgresHandles, error) {
 	pool, err := pgxpool.NewWithConfig(context.Background(), config)
 
 	if err != nil {
 		return &PostgresHandles{}, err
 	}
 
-	pg := &PostgresHandles{pool}
+	pg := &PostgresHandles{pool, handlesTable, domainsTable}
 
-	healthy, status := pg.IsHealthy()
+	healthy, status := pg.IsHealthy(context.Background())
 
 	if !healthy {
 		return &PostgresHandles{}, errors.New(status)
 	}
 
+	// TODO: Check can access tables
+
 	return pg, nil
 }
 
-// TODO: Should pass in request context?
-func (pg *PostgresHandles) GetDecentralizedIDForHandle(handle Handle) (DecentralizedID, error) {
-	connection, err := pg.pool.Acquire(context.Background())
+func (pg *PostgresHandles) GetDecentralizedIDForHandle(ctx context.Context, handle Handle) (DecentralizedID, error) {
+	connection, err := pg.pool.Acquire(ctx)
 
 	defer connection.Release()
 
@@ -42,7 +45,7 @@ func (pg *PostgresHandles) GetDecentralizedIDForHandle(handle Handle) (Decentral
 	var did DecentralizedID
 
 	err = connection.QueryRow(
-		context.Background(),
+		ctx,
 		"select did from handles_server_active_handles where handle = $1",
 		handle.String(),
 	).Scan(&did)
@@ -54,8 +57,8 @@ func (pg *PostgresHandles) GetDecentralizedIDForHandle(handle Handle) (Decentral
 	return did, nil
 }
 
-func (pg *PostgresHandles) CanProvideForDomain(domain Domain) (bool, error) {
-	connection, err := pg.pool.Acquire(context.Background())
+func (pg *PostgresHandles) CanProvideForDomain(ctx context.Context, domain Domain) (bool, error) {
+	connection, err := pg.pool.Acquire(ctx)
 
 	defer connection.Release()
 
@@ -65,13 +68,13 @@ func (pg *PostgresHandles) CanProvideForDomain(domain Domain) (bool, error) {
 
 	exists := false
 
-	err = connection.QueryRow(context.Background(), "select exists(select 1 from handles_server_active_domains where domain = $1)", domain).Scan(&exists)
+	err = connection.QueryRow(ctx, "select exists(select 1 from handles_server_active_domains where domain = $1)", domain).Scan(&exists)
 
 	return exists, err
 }
 
-func (pg *PostgresHandles) IsHealthy() (bool, string) {
-	connection, err := pg.pool.Acquire(context.Background())
+func (pg *PostgresHandles) IsHealthy(ctx context.Context) (bool, string) {
+	connection, err := pg.pool.Acquire(ctx)
 
 	if err != nil {
 		return false, err.Error()
@@ -79,7 +82,7 @@ func (pg *PostgresHandles) IsHealthy() (bool, string) {
 
 	defer connection.Release()
 
-	err = connection.Ping(context.Background())
+	err = connection.Ping(ctx)
 
 	if err != nil {
 		return false, err.Error()

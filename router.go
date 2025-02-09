@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -10,7 +11,7 @@ import (
 
 func CheckServerIsHealthy(provider ProvidesDecentralizedIDs) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		healthy, explanation := provider.IsHealthy()
+		healthy, explanation := provider.IsHealthy(c)
 		if !healthy {
 			c.AbortWithError(http.StatusBadGateway, errors.New(explanation))
 		}
@@ -21,7 +22,6 @@ func CheckServerIsHealthy(provider ProvidesDecentralizedIDs) gin.HandlerFunc {
 type Result struct {
 	HasDecentralizedID bool
 	DecentralizedID    DecentralizedID
-	Err                error
 }
 
 func ParseHandleFromHostname(c *gin.Context) {
@@ -41,7 +41,7 @@ func CheckServerProvidesForDomain(provider ProvidesDecentralizedIDs) gin.Handler
 	return func(c *gin.Context) {
 		domain := Domain(strings.ToLower(c.Query("domain")))
 
-		canProvide, err := provider.CanProvideForDomain(domain)
+		canProvide, err := provider.CanProvideForDomain(c, domain)
 
 		if err != nil {
 			c.AbortWithError(http.StatusBadGateway, err)
@@ -61,15 +61,18 @@ func WithHandleResult(provider ProvidesDecentralizedIDs) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		handle := c.MustGet("handle").(Handle)
 
-		did, err := provider.GetDecentralizedIDForHandle(handle)
+		// TODO: Check can provide for domain
 
-		// TODO: Check type of err is DecentralizedIDNotFoundError
-		// TODO: If err then return error
+		did, err := provider.GetDecentralizedIDForHandle(c, handle)
+
+		if err != nil {
+			c.AbortWithError(http.StatusBadGateway, err)
+			return
+		}
 
 		c.Set("result", Result{
 			HasDecentralizedID: did != "",
 			DecentralizedID:    did,
-			Err:                err,
 		})
 	}
 }
@@ -77,8 +80,11 @@ func WithHandleResult(provider ProvidesDecentralizedIDs) gin.HandlerFunc {
 func VerifyHandle(c *gin.Context) {
 	result := c.MustGet("result").(Result)
 
-	if result.Err != nil {
-		c.String(http.StatusNotFound, result.Err.Error())
+	if !result.HasDecentralizedID {
+		c.String(
+			http.StatusNotFound,
+			fmt.Sprintf("Decentralized ID not found for %s", c.MustGet("handle").(Handle).String()),
+		)
 		return
 	}
 
@@ -90,8 +96,8 @@ func RedirectUnmatchedRoute(config Config) gin.HandlerFunc {
 		result := c.MustGet("result").(Result)
 
 		if result.HasDecentralizedID {
-			c.Redirect(http.StatusTemporaryRedirect, FormatTemplateUrl(
-				config.RedirectDID,
+			c.Redirect(http.StatusTemporaryRedirect, URLFromTemplate(
+				config.RedirectDIDTemplate,
 				c.Request,
 				c.MustGet("handle").(Handle),
 				result.DecentralizedID,
@@ -99,8 +105,8 @@ func RedirectUnmatchedRoute(config Config) gin.HandlerFunc {
 			return
 		}
 
-		c.Redirect(http.StatusTemporaryRedirect, FormatTemplateUrl(
-			config.RedirectHandle,
+		c.Redirect(http.StatusTemporaryRedirect, URLFromTemplate(
+			config.RedirectHandleTemplate,
 			c.Request,
 			c.MustGet("handle").(Handle),
 			DecentralizedID(""),

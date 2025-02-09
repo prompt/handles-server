@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -62,7 +61,6 @@ func TestHandleResultIsAddedToRequestContext(t *testing.T) {
 	assert.Equal(t, ctx.MustGet("result"), Result{
 		HasDecentralizedID: true,
 		DecentralizedID:    "did:plc:example001",
-		Err:                nil,
 	})
 }
 
@@ -82,11 +80,10 @@ func TestRedirectsUnmatchedRouteWithDecentralizedID(t *testing.T) {
 	ctx.Set("result", Result{
 		HasDecentralizedID: true,
 		DecentralizedID:    DecentralizedID("did:plc:example"),
-		Err:                nil,
 	})
 
 	RedirectUnmatchedRoute(Config{
-		RedirectDID: "https://example.com/{did}",
+		RedirectDIDTemplate: "https://example.com/{did}",
 	})(ctx)
 
 	url, _ := res.Result().Location()
@@ -110,11 +107,10 @@ func TestRedirectsUnmatchedRouteWithoutDecentralizedID(t *testing.T) {
 
 	ctx.Set("result", Result{
 		HasDecentralizedID: false,
-		Err:                errors.New("No Decentralized ID found for handle."),
 	})
 
 	RedirectUnmatchedRoute(Config{
-		RedirectHandle: "https://example.com/?from={handle}",
+		RedirectHandleTemplate: "https://example.com/?from={handle}",
 	})(ctx)
 
 	url, _ := res.Result().Location()

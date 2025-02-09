@@ -22,8 +22,10 @@ func HostnameToHandle(hostname string) (Handle, error) {
 	}, nil
 }
 
-func FormatTemplateUrl(
-	template string,
+type URLTemplate string
+
+func URLFromTemplate(
+	template URLTemplate,
 	request *http.Request,
 	handle Handle,
 	did DecentralizedID,
@@ -39,9 +41,11 @@ func FormatTemplateUrl(
 		"{request.query}":   string(request.URL.RawQuery),
 	}
 
+	url := string(template)
+
 	for token, value := range replacements {
-		template = strings.ReplaceAll(template, token, value)
+		url = strings.ReplaceAll(url, token, value)
 	}
 
-	return template
+	return url
 }

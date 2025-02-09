@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"context"
+	"fmt"
+)
 
 type MapOfDids = map[Hostname]DecentralizedID
 
@@ -16,8 +19,8 @@ func NewInMemoryProvider(dids MapOfDids, domains MapOfDomains) *InMemoryProvider
 	return &InMemoryProvider{dids, domains, true}
 }
 
-func (memory *InMemoryProvider) GetDecentralizedIDForHandle(handle Handle) (DecentralizedID, error) {
-	canProvide, err := memory.CanProvideForDomain(handle.Domain)
+func (memory *InMemoryProvider) GetDecentralizedIDForHandle(ctx context.Context, handle Handle) (DecentralizedID, error) {
+	canProvide, err := memory.CanProvideForDomain(ctx, handle.Domain)
 
 	if err != nil {
 		return "", err
@@ -27,18 +30,16 @@ func (memory *InMemoryProvider) GetDecentralizedIDForHandle(handle Handle) (Dece
 		return "", &CannotGetHandelsFromDomainError{handle: handle}
 	}
 
-	if did, found := memory.dids[Hostname(handle.String())]; found {
-		return did, nil
-	}
+	did := memory.dids[Hostname(handle.String())]
 
-	return "", DecentralizedIDNotFoundError{handle}
+	return did, nil
 }
 
-func (memory *InMemoryProvider) CanProvideForDomain(domain Domain) (bool, error) {
+func (memory *InMemoryProvider) CanProvideForDomain(ctx context.Context, domain Domain) (bool, error) {
 	return memory.domains[domain], nil
 }
 
-func (memory *InMemoryProvider) IsHealthy() (bool, string) {
+func (memory *InMemoryProvider) IsHealthy(ctx context.Context) (bool, string) {
 	if memory.isHealthy {
 		return true, fmt.Sprintf("Available with %d handles for %d domains", len(memory.dids), len(memory.domains))
 	}
