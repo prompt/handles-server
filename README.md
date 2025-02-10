@@ -30,10 +30,10 @@ a handle.
 
 ### `memory` provider
 
-| Environment Variable | Description                                           | Example                                                      |
-| -------------------- | ----------------------------------------------------- | ------------------------------------------------------------ |
-| **`MEMORY_DIDS`**    | **Required** Comma separated list of handle@did pairs | `alice.example.com@did:plc:001, bob.example.com@did:plc:002` |
-| **`MEMORY_DOMAINS`** | **Required** Comma separate list of supported domains | `example.com,example.net`                                    |
+| Environment Variable | Description                                           | Example                                               |
+| -------------------- | ----------------------------------------------------- | ----------------------------------------------------- |
+| **`MEMORY_DIDS`**    | **Required** Comma separated list of handle@did pairs | `a.example.com@did:plc:001,b.example.com@did:plc:002` |
+| **`MEMORY_DOMAINS`** | **Required** Comma separate list of supported domains | `example.com,example.net`                             |
 
 ### `postgres` provider
 
