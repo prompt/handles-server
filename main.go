@@ -2,9 +2,7 @@ package main
 
 import (
 	"log"
-	"log/slog"
 	"net"
-	"os"
 
 	"github.com/gin-gonic/gin"
 	sloggin "github.com/samber/slog-gin"
@@ -17,25 +15,21 @@ func main() {
 		log.Fatal(err)
 	}
 
-	var logger = slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
-		Level: config.LogLevel,
-	}))
-
 	router := gin.New()
 
-	AddApplicationRoutes(router, logger, config)
+	AddApplicationRoutes(router, config)
 
 	if err := router.Run(net.JoinHostPort(config.Host, config.Port)); err != nil {
 		log.Fatal(err)
 	}
 }
 
-func AddApplicationRoutes(router *gin.Engine, logger *slog.Logger, config Config) {
-	router.Use(sloggin.New(logger))
+func AddApplicationRoutes(router *gin.Engine, config Config) {
+	router.Use(sloggin.New(config.Logger))
 	router.Use(gin.Recovery())
 
 	router.GET("/healthz", CheckServerIsHealthy(config.Provider))
-	router.GET("/domainz", CheckServerProvidesForDomain(config.Provider))
+	router.GET("/domainz", CheckServerProvidesForDomain(config.Provider, config.CheckDomainParameter))
 
 	router.Use(ParseHandleFromHostname)
 	router.Use(WithHandleResult(config.Provider))

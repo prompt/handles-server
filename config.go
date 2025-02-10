@@ -3,16 +3,20 @@ package main
 import (
 	"errors"
 	"log/slog"
+	"os"
 	"reflect"
 
 	"github.com/caarlos0/env/v11"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/jackc/pgx/v5/tracelog"
+	pgxslog "github.com/mcosta74/pgx-slog"
 )
 
 type Config struct {
-	Host     string     `env:"HOST" envDefault:"localhost"`
-	Port     string     `env:"PORT" envDefault:"80"`
-	LogLevel slog.Level `env:"LOG_LEVEL" envDefault:"error"`
+	Host string `env:"HOST" envDefault:"localhost"`
+	Port string `env:"PORT" envDefault:"80"`
+
+	Logger *slog.Logger `env:"LOG_LEVEL" envDefault:"error"`
 
 	RedirectDIDTemplate    URLTemplate `env:"REDIRECT_DID_TEMPLATE" envDefault:"https://bsky.app/profile/{did}"`
 	RedirectHandleTemplate URLTemplate `env:"REDIRECT_HANDLE_TEMPLATE" envDefault:"https://{handle.domain}?handle={handle}"`
@@ -25,6 +29,8 @@ type Config struct {
 	MemoryDomains []string          `env:"MEMORY_DOMAINS"`
 
 	Provider ProvidesDecentralizedIDs `env:"DID_PROVIDER,required"`
+
+	CheckDomainParameter string `env:"CHECK_DOMAIN_PARAMETER" envDefault:"handle"`
 }
 
 func ConfigFromEnvironment() (Config, error) {
@@ -32,13 +38,28 @@ func ConfigFromEnvironment() (Config, error) {
 
 	err := env.ParseWithOptions(&config, env.Options{
 		FuncMap: map[reflect.Type]env.ParserFunc{
-			reflect.TypeFor[slog.Level](): func(v string) (interface{}, error) {
+			reflect.TypeFor[slog.Logger](): func(v string) (interface{}, error) {
 				var level slog.Level
-				return level, level.UnmarshalText([]byte(v))
+
+				err := level.UnmarshalText([]byte(v))
+
+				if err != nil {
+					return nil, err
+				}
+
+				return *slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
+					Level: level,
+				})), nil
 			},
 			reflect.TypeFor[pgxpool.Config](): func(v string) (interface{}, error) {
-				config, err := pgxpool.ParseConfig(v)
-				return *config, err
+				databaseConfig, err := pgxpool.ParseConfig(v)
+
+				databaseConfig.ConnConfig.Tracer = &tracelog.TraceLog{
+					Logger:   pgxslog.NewLogger(config.Logger),
+					LogLevel: tracelog.LogLevelDebug,
+				}
+
+				return *databaseConfig, err
 			},
 			reflect.TypeFor[ProvidesDecentralizedIDs](): func(v string) (interface{}, error) {
 				switch v {

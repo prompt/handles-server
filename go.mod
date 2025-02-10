@@ -6,6 +6,7 @@ require (
 	github.com/caarlos0/env/v11 v11.3.1
 	github.com/gin-gonic/gin v1.10.0
 	github.com/jackc/pgx/v5 v5.7.2
+	github.com/mcosta74/pgx-slog v0.4.1
 	github.com/samber/slog-gin v1.14.1
 	github.com/stretchr/testify v1.10.0
 )
