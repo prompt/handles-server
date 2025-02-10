@@ -14,7 +14,7 @@ import (
 
 type Config struct {
 	Host string `env:"HOST" envDefault:"localhost"`
-	Port string `env:"PORT" envDefault:"80"`
+	Port string `env:"PORT" envDefault:"8080"`
 
 	Logger *slog.Logger `env:"LOG_LEVEL" envDefault:"error"`
 

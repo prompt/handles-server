@@ -4,6 +4,15 @@ A very simple server that verifies Bluesky (atproto) handles using the
 [HTTPS well-known Method][atproto/resolution/well-known]; an alternative to
 managing many DNS records.
 
+## Quickstart
+
+```console
+curl -LO https://github.com/prompt/handles-server/releases/download/v1/handles-server-linux
+chmod +x handles-server-linux
+DID_PROVIDER="memory" MEMORY_DOMAINS="example.com" MEMORY_DIDS="alice.example.com@did:plc:001" \
+./handles-server-linux
+```
+
 ## Implementation
 
 A `handle` is a hostname (e.g: `alice.example.com`) which the server may or may
