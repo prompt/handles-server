@@ -28,14 +28,15 @@ func NewTestEnvironment() (*gin.Engine, *InMemoryProvider) {
 		Provider:               testProvider,
 		RedirectDIDTemplate:    "https://example.com/profile/{did}",
 		RedirectHandleTemplate: "https://example.com/register?handle={handle}",
+		Logger: slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
+			Level: slog.LevelWarn,
+		})),
+		CheckDomainParameter: "domain",
 	}
 
 	var testRouter = gin.New()
-	var testLogger = slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
-		Level: slog.LevelWarn,
-	}))
 
-	AddApplicationRoutes(testRouter, testLogger, testConfig)
+	AddApplicationRoutes(testRouter, testConfig)
 
 	return testRouter, testProvider
 }
@@ -68,7 +69,7 @@ func TestDomainEndpointReturnsOKForProvidedDomain(t *testing.T) {
 	router, _ := NewTestEnvironment()
 
 	res := httptest.NewRecorder()
-	req, _ := http.NewRequest("GET", "/domainz?domain=example.com", nil)
+	req, _ := http.NewRequest("GET", "/domainz?domain=alice.example.com", nil)
 	router.ServeHTTP(res, req)
 
 	assert.Equal(t, http.StatusOK, res.Code)
@@ -78,7 +79,7 @@ func TestDomainEndpointReturnsErrorForUnprovidedDomain(t *testing.T) {
 	router, _ := NewTestEnvironment()
 
 	res := httptest.NewRecorder()
-	req, _ := http.NewRequest("GET", "/domainz?domain=unprovided.test", nil)
+	req, _ := http.NewRequest("GET", "/domainz?domain=alice.unprovided.test", nil)
 	router.ServeHTTP(res, req)
 
 	assert.Equal(t, http.StatusNotFound, res.Code)

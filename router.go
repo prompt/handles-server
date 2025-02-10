@@ -37,11 +37,16 @@ func ParseHandleFromHostname(c *gin.Context) {
 	c.Next()
 }
 
-func CheckServerProvidesForDomain(provider ProvidesDecentralizedIDs) gin.HandlerFunc {
+func CheckServerProvidesForDomain(provider ProvidesDecentralizedIDs, handleParameter string) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		domain := Domain(strings.ToLower(c.Query("domain")))
+		handle, err := HostnameToHandle(strings.ToLower(c.Query(handleParameter)))
 
-		canProvide, err := provider.CanProvideForDomain(c, domain)
+		if err != nil {
+			_ = c.AbortWithError(http.StatusBadRequest, err)
+			return
+		}
+
+		canProvide, err := provider.CanProvideForDomain(c, handle.Domain)
 
 		if err != nil {
 			_ = c.AbortWithError(http.StatusInternalServerError, err)
@@ -49,11 +54,11 @@ func CheckServerProvidesForDomain(provider ProvidesDecentralizedIDs) gin.Handler
 		}
 
 		if !canProvide {
-			c.String(http.StatusNotFound, "Decentralized IDs are not provided for %s by this server.", domain)
+			c.String(http.StatusNotFound, "Decentralized IDs are not provided for %s by this server.", handle.Domain)
 			return
 		}
 
-		c.String(http.StatusOK, "Decentralized IDs are not provided for %s by this server.", domain)
+		c.String(http.StatusOK, "Decentralized IDs are provided for %s by this server.", handle.Domain)
 	}
 }
 
