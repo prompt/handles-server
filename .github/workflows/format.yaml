@@ -1,0 +1,25 @@
+name: Format
+
+on:
+  - push
+
+jobs:
+  golangci-lint:
+    name: Run golangci-lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v4
+        with:
+          go-version-file: "go.mod"
+      - run: go build -v .
+      - uses: golangci/golangci-lint-action@v3
+  tidy:
+    name: Tidy go modules
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v4
+        with:
+          go-version-file: "go.mod"
+      - uses: katexochen/go-tidy-check@v2
