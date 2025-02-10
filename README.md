@@ -21,18 +21,19 @@ a handle.
 
 ## Configuration
 
-| Environment Variable       | Description                                        | Example                                |
-| -------------------------- | -------------------------------------------------- | -------------------------------------- |
-| **`DID_PROVIDER`**         | **Required** Name of a supported provider          | `postgres` `memory`                    |
-| `REDIRECT_DID_TEMPLATE`    | URL template for redirects when a DID is found     | `https://bsky.app/profile/{did}`       |
-| `REDIRECT_HANDLE_TEMPLATE` | URL template for redirects when a DID is not found | `https://example.com/?handle={handle}` |
+| Environment Variable       | Description                                                | Example                                |
+| -------------------------- | ---------------------------------------------------------- | -------------------------------------- |
+| **`DID_PROVIDER`**         | **Required** Name of a supported provider                  | `postgres` `memory`                    |
+| `REDIRECT_DID_TEMPLATE`    | URL template for redirects when a DID is found             | `https://bsky.app/profile/{did}`       |
+| `REDIRECT_HANDLE_TEMPLATE` | URL template for redirects when a DID is not found         | `https://example.com/?handle={handle}` |
+| `CHECK_DOMAIN_PARAMETER`   | Query parameter used by check domain endpoint (`/domainz`) | `handle` `hostname` `domain`           |
 
 ### `memory` provider
 
-| Environment Variable | Description                                           | Example                                                                   |
-| -------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------- |
-| **`MEMORY_DIDS`**    | **Required** Comma separated list of handle@did pairs | `alice.example.com@did:plc:example001,bob.example.com@did:plc:example002` |
-| **`MEMORY_DOMAINS`** | **Required** Comma separate list of supported domains | `example.com,example.net`                                                 |
+| Environment Variable | Description                                           | Example                                                     |
+| -------------------- | ----------------------------------------------------- | ----------------------------------------------------------- |
+| **`MEMORY_DIDS`**    | **Required** Comma separated list of handle@did pairs | `alice.example.com@did:plc:001,bob.example.com@did:plc:002` |
+| **`MEMORY_DOMAINS`** | **Required** Comma separate list of supported domains | `example.com,example.net`                                   |
 
 ### `postgres` provider
 
