@@ -33,7 +33,7 @@ jobs:
         env:
           GOOS: "${{ matrix.os }}"
           GOARCH: "${{ matrix.arch }}"
-        run: go build -o ${{ matrix.filename }}
+        run: go build -ldflags="-s -w" -o ${{ matrix.filename }}
       - name: Upload binaries to release
         uses: svenstaro/upload-release-action@v2
         with:
