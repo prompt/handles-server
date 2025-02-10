@@ -2,8 +2,8 @@ name: Release (build, publish)
 
 on:
   push:
-    # tags:
-    #   - "v*"
+    tags:
+      - "v*"
 
 permissions:
   contents: write
@@ -42,4 +42,3 @@ jobs:
           overwrite: true
           make_latest: false
           draft: true
-
