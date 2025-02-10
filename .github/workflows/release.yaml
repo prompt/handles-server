@@ -13,12 +13,16 @@ jobs:
   upload-build-to-release:
     strategy:
       matrix:
-        os:
-          - linux
-          - windows
-          - darwin
-        arch:
-          - amd64
+        include:
+          - os: "linux"
+            arch: "amd64"
+            filename: "handles-server-linux"
+          - os: "darwin"
+            arch: "amd64"
+            filename: "handles-server-macos"
+          - os: "windows"
+            arch: "amd64"
+            filename: "handles-server.exe"
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -29,7 +33,7 @@ jobs:
         env:
           GOOS: "${{ matrix.os }}"
           GOARCH: "${{ matrix.arch }}"
-        run: go build -o ${{matrix.os}}-${{matrix.arch}}
+        run: go build -o ${{ matrix.filename }}
       # - name: Upload binaries to release
       #   uses: svenstaro/upload-release-action@v2
       #   with:
