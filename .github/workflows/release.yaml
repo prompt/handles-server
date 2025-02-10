@@ -1,0 +1,44 @@
+name: Release (build, publish)
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  upload-build-to-release:
+    strategy:
+      matrix:
+        include:
+          - os: "linux"
+            arch: "amd64"
+            filename: "handles-server-linux"
+          - os: "darwin"
+            arch: "amd64"
+            filename: "handles-server-macos"
+          - os: "windows"
+            arch: "amd64"
+            filename: "handles-server.exe"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v4
+        with:
+          go-version-file: "go.mod"
+      - name: Build
+        env:
+          GOOS: "${{ matrix.os }}"
+          GOARCH: "${{ matrix.arch }}"
+        run: go build -ldflags="-s -w" -o ${{ matrix.filename }}
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          file: "./handles-server*"
+          file_glob: true
+          overwrite: true
+          make_latest: false
+          draft: true
