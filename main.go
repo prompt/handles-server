@@ -18,7 +18,7 @@ func main() {
 	}
 
 	var logger = slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
-		Level: slog.LevelInfo,
+		Level: config.LogLevel,
 	}))
 
 	router := gin.New()
@@ -42,5 +42,5 @@ func AddApplicationRoutes(router *gin.Engine, logger *slog.Logger, config Config
 
 	router.GET("/.well-known/atproto-did", VerifyHandle)
 
-	router.NoRoute(RedirectUnmatchedRoute(config))
+	router.NoRoute(RedirectUnmatchedRoute(config.RedirectDIDTemplate, config.RedirectHandleTemplate))
 }

@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-var memory = NewInMemoryProvider(map[Hostname]DecentralizedID{
+var testMemoryProvider = NewInMemoryProvider(map[Hostname]DecentralizedID{
 	"alice.example.com": "did:plc:example001",
 	"bob.example.com":   "did:plc:example002",
 }, map[Domain]bool{
@@ -20,34 +20,34 @@ func TestMemoryProviderHasDecentralizedIdForHandle(t *testing.T) {
 		Username: "alice",
 	}
 
-	did, err := memory.GetDecentralizedIDForHandle(context.Background(), handle)
+	did, err := testMemoryProvider.GetDecentralizedIDForHandle(context.Background(), handle)
 
 	assert.Nil(t, err)
 	assert.Equal(t, did, DecentralizedID("did:plc:example001"))
 }
 
 func TestMemoryProviderCanProvideForDomain(t *testing.T) {
-	expectedToProvide, err := memory.CanProvideForDomain(context.Background(), "example.com")
+	expectedToProvide, err := testMemoryProvider.CanProvideForDomain(context.Background(), "example.com")
 
 	assert.Nil(t, err)
 	assert.True(t, expectedToProvide)
 
-	expectedNotToProvide, err := memory.CanProvideForDomain(context.Background(), "example.net")
+	expectedNotToProvide, err := testMemoryProvider.CanProvideForDomain(context.Background(), "example.net")
 
 	assert.Nil(t, err)
 	assert.False(t, expectedNotToProvide)
 }
 
 func TestMemoryIsHealthyByDefault(t *testing.T) {
-	healthy, _ := memory.IsHealthy(context.Background())
+	healthy, _ := testMemoryProvider.IsHealthy(context.Background())
 
 	assert.True(t, healthy)
 }
 
 func TestMemoryCanBeSetUnhealthy(t *testing.T) {
-	memory.SetHealthy(false)
+	testMemoryProvider.SetHealthy(false)
 
-	healthy, _ := memory.IsHealthy(context.Background())
+	healthy, _ := testMemoryProvider.IsHealthy(context.Background())
 
 	assert.False(t, healthy)
 }

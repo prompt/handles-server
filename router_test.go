@@ -37,7 +37,7 @@ func TestInvalidHostnameCausesBadRequest(t *testing.T) {
 	assert.Equal(t, http.StatusBadRequest, res.Code)
 }
 
-var testProvider = NewInMemoryProvider(map[Hostname]DecentralizedID{
+var testProviderForRouter = NewInMemoryProvider(map[Hostname]DecentralizedID{
 	"alice.example.com": "did:plc:example001",
 	"bob.example.com":   "did:plc:example002",
 }, map[Domain]bool{
@@ -56,7 +56,7 @@ func TestHandleResultIsAddedToRequestContext(t *testing.T) {
 		Username: "alice",
 	})
 
-	WithHandleResult(testProvider)(ctx)
+	WithHandleResult(testProviderForRouter)(ctx)
 
 	assert.Equal(t, ctx.MustGet("result"), Result{
 		HasDecentralizedID: true,
@@ -77,7 +77,7 @@ func TestRequestForUnsupportedDomainIsRejectedAsBadRequest(t *testing.T) {
 		Username: "alice",
 	})
 
-	WithHandleResult(testProvider)(ctx)
+	WithHandleResult(testProviderForRouter)(ctx)
 
 	assert.Equal(t, http.StatusBadRequest, res.Code)
 }
@@ -100,9 +100,10 @@ func TestRedirectsUnmatchedRouteWithDecentralizedID(t *testing.T) {
 		DecentralizedID:    DecentralizedID("did:plc:example"),
 	})
 
-	RedirectUnmatchedRoute(Config{
-		RedirectDIDTemplate: "https://example.com/{did}",
-	})(ctx)
+	RedirectUnmatchedRoute(
+		URLTemplate("https://example.com/{did}"),
+		URLTemplate("https://example.com/{handle}"),
+	)(ctx)
 
 	url, _ := res.Result().Location()
 
@@ -127,9 +128,10 @@ func TestRedirectsUnmatchedRouteWithoutDecentralizedID(t *testing.T) {
 		HasDecentralizedID: false,
 	})
 
-	RedirectUnmatchedRoute(Config{
-		RedirectHandleTemplate: "https://example.com/?from={handle}",
-	})(ctx)
+	RedirectUnmatchedRoute(
+		URLTemplate("https://example.com/{did}"),
+		URLTemplate("https://example.com/?from={handle}"),
+	)(ctx)
 
 	url, _ := res.Result().Location()
 
@@ -145,9 +147,9 @@ func TestServerIsHealthyWhenProviderIsHealthy(t *testing.T) {
 	req.Host = "alice.example.com"
 	ctx.Request = req
 
-	testProvider.SetHealthy(true)
+	testProviderForRouter.SetHealthy(true)
 
-	CheckServerIsHealthy(testProvider)(ctx)
+	CheckServerIsHealthy(testProviderForRouter)(ctx)
 
 	assert.Equal(t, http.StatusOK, res.Code)
 }
@@ -160,9 +162,9 @@ func TestServerIsUnhealthyWhenProviderIsUnhealthy(t *testing.T) {
 	req.Host = "alice.example.com"
 	ctx.Request = req
 
-	testProvider.SetHealthy(false)
+	testProviderForRouter.SetHealthy(false)
 
-	CheckServerIsHealthy(testProvider)(ctx)
+	CheckServerIsHealthy(testProviderForRouter)(ctx)
 
-	assert.Equal(t, http.StatusBadGateway, res.Code)
+	assert.Equal(t, http.StatusInternalServerError, res.Code)
 }

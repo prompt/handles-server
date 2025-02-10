@@ -13,7 +13,7 @@ func CheckServerIsHealthy(provider ProvidesDecentralizedIDs) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		healthy, explanation := provider.IsHealthy(c)
 		if !healthy {
-			_ = c.AbortWithError(http.StatusBadGateway, errors.New(explanation))
+			_ = c.AbortWithError(http.StatusInternalServerError, errors.New(explanation))
 		}
 		c.String(http.StatusOK, explanation)
 	}
@@ -44,7 +44,7 @@ func CheckServerProvidesForDomain(provider ProvidesDecentralizedIDs) gin.Handler
 		canProvide, err := provider.CanProvideForDomain(c, domain)
 
 		if err != nil {
-			_ = c.AbortWithError(http.StatusBadGateway, err)
+			_ = c.AbortWithError(http.StatusInternalServerError, err)
 			return
 		}
 
@@ -98,13 +98,13 @@ func VerifyHandle(c *gin.Context) {
 	c.String(http.StatusOK, string(result.DecentralizedID))
 }
 
-func RedirectUnmatchedRoute(config Config) gin.HandlerFunc {
+func RedirectUnmatchedRoute(redirectDid URLTemplate, redirectHandle URLTemplate) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		result := c.MustGet("result").(Result)
 
 		if result.HasDecentralizedID {
 			c.Redirect(http.StatusTemporaryRedirect, URLFromTemplate(
-				config.RedirectDIDTemplate,
+				redirectDid,
 				c.Request,
 				c.MustGet("handle").(Handle),
 				result.DecentralizedID,
@@ -113,7 +113,7 @@ func RedirectUnmatchedRoute(config Config) gin.HandlerFunc {
 		}
 
 		c.Redirect(http.StatusTemporaryRedirect, URLFromTemplate(
-			config.RedirectHandleTemplate,
+			redirectHandle,
 			c.Request,
 			c.MustGet("handle").(Handle),
 			DecentralizedID(""),
