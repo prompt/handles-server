@@ -27,6 +27,13 @@ a handle.
 | `REDIRECT_DID_TEMPLATE`    | URL template for redirects when a DID is found     | `https://bsky.app/profile/{did}`       |
 | `REDIRECT_HANDLE_TEMPLATE` | URL template for redirects when a DID is not found | `https://example.com/?handle={handle}` |
 
+### `memory` provider
+
+| Environment Variable | Description                                           | Example                                                                   |
+| -------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------- |
+| **`MEMORY_DIDS`**    | **Required** Comma separated list of handle@did pairs | `alice.example.com@did:plc:example001,bob.example.com@did:plc:example002` |
+| **`MEMORY_DOMAINS`** | **Required** Comma separate list of supported domains | `example.com,example.net`                                                 |
+
 ### `postgres` provider
 
 | Environment Variable     | Description                            | Example                                      |

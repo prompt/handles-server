@@ -21,6 +21,9 @@ type Config struct {
 	PostgresDidsTable    string          `env:"DATABASE_TABLE_DIDS" envDefault:"dids"`
 	PostgresDomainsTable string          `env:"DATABASE_TABLE_DOMAINS" envDefault:"domains"`
 
+	MemoryDids    map[string]string `env:"MEMORY_DIDS" envKeyValSeparator:"@"`
+	MemoryDomains []string          `env:"MEMORY_DOMAINS"`
+
 	Provider ProvidesDecentralizedIDs `env:"DID_PROVIDER,required"`
 }
 
@@ -50,12 +53,23 @@ func ConfigFromEnvironment() (Config, error) {
 						config.PostgresDomainsTable,
 					)
 				case "memory":
-					provider := NewInMemoryProvider(map[Hostname]DecentralizedID{
-						"alice.example.com": "did:plc:example001",
-						"bob.example.com":   "did:plc:example002",
-					}, map[Domain]bool{
-						"example.com": true,
-					})
+					if config.MemoryDids == nil || config.MemoryDomains == nil {
+						return nil, errors.New("a map of Decentralized IDs (`MEMORY_DIDS`) and domains (`MEMORY_DOMAINS`) is required to use the memory provider")
+					}
+
+					dids := make(MapOfDids)
+
+					for handle, did := range config.MemoryDids {
+						dids[Hostname(handle)] = DecentralizedID(did)
+					}
+
+					domains := make(MapOfDomains)
+
+					for _, domain := range config.MemoryDomains {
+						domains[Domain(domain)] = true
+					}
+
+					provider := NewInMemoryProvider(dids, domains)
 					return provider, nil
 				default:
 					return nil, errors.New("no valid provider of decentralized IDs specified")
