@@ -21,12 +21,19 @@ a handle.
 
 ## Configuration
 
-| Environment Variable       | Description                                        | Example                                      |
-| -------------------------- | -------------------------------------------------- | -------------------------------------------- |
-| **`DID_PROVIDER`**         | **Required** Name of a supported provider          | `postgres` `memory`                          |
-| `DATABASE_URL`             | Postgres database connection                       | `postgres://postgres@localhost:5432/handles` |
-| `REDIRECT_DID_TEMPLATE`    | URL template for redirects when a DID is found     | `https://bsky.app/profile/{did}`             |
-| `REDIRECT_HANDLE_TEMPLATE` | URL template for redirects when a DID is not found | `https://example.com/?handle={handle}`       |
+| Environment Variable       | Description                                        | Example                                |
+| -------------------------- | -------------------------------------------------- | -------------------------------------- |
+| **`DID_PROVIDER`**         | **Required** Name of a supported provider          | `postgres` `memory`                    |
+| `REDIRECT_DID_TEMPLATE`    | URL template for redirects when a DID is found     | `https://bsky.app/profile/{did}`       |
+| `REDIRECT_HANDLE_TEMPLATE` | URL template for redirects when a DID is not found | `https://example.com/?handle={handle}` |
+
+### `postgres` provider
+
+| Environment Variable     | Description                            | Example                                      |
+| ------------------------ | -------------------------------------- | -------------------------------------------- |
+| **`DATABASE_URL`**       | **Required** Postgres database URL     | `postgres://postgres@localhost:5432/handles` |
+| `DATABASE_TABLE_DIDS`    | Table containing `handle` + `did` rows | `dids` `active_handles`                      |
+| `DATABASE_TABLE_DOMAINS` | Table containing `domain` rows         | `domains` `active_domains`                   |
 
 ### URL templates
 

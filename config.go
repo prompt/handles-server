@@ -18,7 +18,7 @@ type Config struct {
 	RedirectHandleTemplate URLTemplate `env:"REDIRECT_HANDLE_TEMPLATE" envDefault:"https://{handle.domain}?handle={handle}"`
 
 	Postgres             *pgxpool.Config `env:"DATABASE_URL"`
-	PostgresHandlesTable string          `env:"DATABASE_TABLE_HANDLES" envDefault:"handles"`
+	PostgresDidsTable    string          `env:"DATABASE_TABLE_DIDS" envDefault:"dids"`
 	PostgresDomainsTable string          `env:"DATABASE_TABLE_DOMAINS" envDefault:"domains"`
 
 	Provider ProvidesDecentralizedIDs `env:"DID_PROVIDER,required"`
@@ -46,7 +46,7 @@ func ConfigFromEnvironment() (Config, error) {
 
 					return NewPostgresHandlesProvider(
 						config.Postgres,
-						config.PostgresHandlesTable,
+						config.PostgresDidsTable,
 						config.PostgresDomainsTable,
 					)
 				case "memory":
