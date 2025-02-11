@@ -44,14 +44,6 @@ func NewPostgresHandlesProvider(config *pgxpool.Config, didsTable string, domain
 }
 
 func (pg *PostgresHandles) GetDecentralizedIDForHandle(ctx context.Context, handle Handle) (DecentralizedID, error) {
-	connection, err := pg.pool.Acquire(ctx)
-
-	defer connection.Release()
-
-	if err != nil {
-		return "", err
-	}
-
 	canProvide, err := pg.CanProvideForDomain(ctx, handle.Domain)
 
 	if err != nil {
@@ -60,6 +52,14 @@ func (pg *PostgresHandles) GetDecentralizedIDForHandle(ctx context.Context, hand
 
 	if !canProvide {
 		return "", &CannotGetHandelsFromDomainError{domain: handle.Domain}
+	}
+
+	connection, err := pg.pool.Acquire(ctx)
+
+	defer connection.Release()
+
+	if err != nil {
+		return "", err
 	}
 
 	var did DecentralizedID
