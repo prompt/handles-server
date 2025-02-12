@@ -6,8 +6,8 @@ managing many DNS records.
 
 ## Quickstart
 
-```console
-sh -c "$(curl -Ls https://handles.run)" -- -d
+```bash
+sh -c "$(curl -Ls https://handles.run)"
 ```
 
 ...or [download the latest release][releases].
