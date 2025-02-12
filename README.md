@@ -6,12 +6,11 @@ managing many DNS records.
 
 ## Quickstart
 
-```console
-curl -LO https://github.com/prompt/handles-server/releases/download/v1/handles-server-linux
-chmod +x handles-server-linux
-DID_PROVIDER="memory" MEMORY_DOMAINS="example.com" MEMORY_DIDS="alice.example.com@did:plc:001" \
-./handles-server-linux
+```bash
+sh -c "$(curl -Ls https://handles.run)"
 ```
+
+...or [download the latest release][releases].
 
 ## Implementation
 
@@ -68,3 +67,4 @@ A string containing zero or more tokens which are replaced when rendering.
 | `{request.query}`   | Query included in the request                   | `greeting=Hello+World` ` ` |
 
 [atproto/resolution/well-known]: https://atproto.com/specs/handle#handle-resolution
+[releases]: https://github.com/prompt/handles-server/releases
