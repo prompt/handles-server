@@ -47,7 +47,7 @@ func ConfigFromEnvironment() (Config, error) {
 					return nil, err
 				}
 
-				return *slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
+				return *slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{
 					Level: level,
 				})), nil
 			},
