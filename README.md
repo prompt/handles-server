@@ -12,6 +12,12 @@ sh -c "$(curl -Ls https://handles.run)"
 
 ...or [download the latest release][releases].
 
+### Railway
+
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/template/JGzTOH?referralCode=M8LQLq)
+
+One-click deploy is available using Railway.com[^1].
+
 ## Implementation
 
 A `handle` is a hostname (e.g: `alice.example.com`) which the server may or may
@@ -68,3 +74,5 @@ A string containing zero or more tokens which are replaced when rendering.
 
 [atproto/resolution/well-known]: https://atproto.com/specs/handle#handle-resolution
 [releases]: https://github.com/prompt/handles-server/releases
+
+[^1]: Railway provide [a 25% "Template Kickback"](https://railway.com/open-source-kickback) when you sign up using our link
