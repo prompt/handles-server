@@ -12,6 +12,12 @@ sh -c "$(curl -Ls https://handles.run)"
 
 ...or [download the latest release][releases].
 
+### Railway
+
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/template/uNpAvf?referralCode=M8LQLq)
+
+One-click deploy is available using Railway.com.
+
 ## Implementation
 
 A `handle` is a hostname (e.g: `alice.example.com`) which the server may or may
