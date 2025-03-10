@@ -24,24 +24,25 @@ echo "handles-server is downloaded and ready to run."
 
 echo "Start demo of handles server using the in memory provider? (Y/n)"
 read response
+
+function ended_demo() {
+  printf "\n\n"
+  echo "> hopefully the demo was helpful!"
+  printf "\n"
+}
+
 case "$response" in
   [yY][eE][sS] | [yY] | "")
-    function ended_demo() {
-      printf "\n\n"
-      echo "> hopefully the demo was helpful!"
-      printf "\n"
-    }
-
     echo "> Starting server for domain example.com with handles alice.example.com and bob.example.com"
-    sleep 0.5 # An articial delay for time to read the message
+    sleep 0.5 # An artificial delay for time to read the message
     echo "> Test it out with: curl --header 'Host: alice.example.com' http://localhost:8888/.well-known/atproto-did"
-    sleep 1 # An articial delay for time to read the message
+    sleep 1 # An artificial delay for time to read the message
     echo "> exit with ctrl+c once you're done."
     sleep 0.5
     printf "\n\n"
     trap ended_demo INT
     (
-      set -x
+      set -x      
       GIN_MODE=release LOG_LEVEL="debug" PORT=8888 DID_PROVIDER="memory" MEMORY_DOMAINS="example.com" MEMORY_DIDS="alice.example.com@did:plc:001,bob.example.com@did:plc:002" ./handles-server
     )
     ;;
