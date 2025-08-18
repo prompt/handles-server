@@ -27,13 +27,13 @@ tasks:
       - golang-ci
     cmds:
       - go fmt .
-      - golangci-lint run
+      - ./bin/golangci-lint run
       - go mod tidy
 
   golang-ci:
     status:
-      - golangci-lint version && exit 0
+      - ./bin/golangci-lint version && exit 0
     cmds:
       - >
-        curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh |
-        sh -s -- -b $(go env GOPATH)/bin v1.53.3
+        curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | 
+        sh -s v2.4.0
