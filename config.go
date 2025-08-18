@@ -6,7 +6,7 @@ import (
 	"os"
 	"reflect"
 
-	"github.com/caarlos0/env/v11"
+	env "github.com/caarlos0/env/v11"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/jackc/pgx/v5/tracelog"
 	pgxslog "github.com/mcosta74/pgx-slog"

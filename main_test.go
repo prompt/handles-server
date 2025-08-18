@@ -143,3 +143,15 @@ func TestUnknownHandleRedirectsToDestination(t *testing.T) {
 	assert.Equal(t, "https://example.com/register?handle=carol.example.com", url.String())
 
 }
+
+func TestDidEndpointAllowsCrossOriginRequests(t *testing.T) {
+	router, _ := NewTestEnvironment()
+
+	res := httptest.NewRecorder()
+	req, _ := http.NewRequest("GET", "https://alice.example.com/.well-known/atproto-did", nil)
+	router.ServeHTTP(res, req)
+
+	assert.Equal(t, http.StatusOK, res.Code)
+	assert.Equal(t, "did:plc:example001", res.Body.String())
+	assert.Equal(t, "*", res.Header().Get("Access-Control-Allow-Origin"))
+}
