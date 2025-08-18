@@ -100,6 +100,7 @@ func VerifyHandle(c *gin.Context) {
 		return
 	}
 
+	c.Header("Access-Control-Allow-Origin", "*")
 	c.String(http.StatusOK, string(result.DecentralizedID))
 }
 
